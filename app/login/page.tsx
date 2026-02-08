@@ -52,7 +52,7 @@ export default function LoginPage() {
       if (error && typeof error === 'object') {
         // Axios error structure
         if ('response' in error) {
-          const axiosError = error as { response?: { data?: any; status?: number } }
+          const axiosError = error as { response?: { data?: { detail?: { error?: { message?: string }; message?: string }; message?: string; error?: string }; status?: number } }
           
           if (axiosError.response?.status === 401) {
             errorMessage = 'Invalid email or password. Please check your credentials.'

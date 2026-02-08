@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Trash2, Edit2, LogOut, User } from 'lucide-react'
+import { Trash2, Edit2, LogOut, User, Bot, Sparkles, ArrowRight } from 'lucide-react'
 import { auth } from '@/lib/auth'
 import { taskAPI, authAPI } from '@/lib/api'
 import { useToast } from '@/hooks/useToast'
@@ -136,7 +136,7 @@ export default function DashboardPage() {
       await authAPI.logout()
       auth.logout()
       router.push('/login')
-    } catch (error) {
+    } catch {
       // Even if logout API fails, clear local data and redirect
       auth.logout()
       router.push('/login')
@@ -194,6 +194,55 @@ export default function DashboardPage() {
               </span>
             </h1>
             <p className="text-gray-300 text-lg">Stay organized, stay productive</p>
+          </div>
+
+          {/* Chat with AI Assistant Card */}
+          <div className="mb-8">
+            <button
+              onClick={() => router.push('/chat')}
+              className="group w-full relative overflow-hidden"
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
+              <div className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl p-6 md:p-8 shadow-2xl transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-[0_20px_50px_rgba(168,85,247,0.4)]">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                  {/* Icon Section */}
+                  <div className="flex-shrink-0">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-white/30 rounded-2xl blur-xl"></div>
+                      <div className="relative w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border-2 border-white/30 shadow-lg">
+                        <Bot className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                        <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-300 animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Content Section */}
+                  <div className="flex-1 text-center md:text-left">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center justify-center md:justify-start gap-2">
+                      Chat with AI Assistant
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/20 rounded-full text-xs md:text-sm font-semibold">
+                        <Sparkles className="w-3 h-3" />
+                        AI Powered
+                      </span>
+                    </h2>
+                    <p className="text-purple-100 text-sm md:text-base mb-3">
+                      Manage your tasks using natural language
+                    </p>
+                    <div className="flex items-center justify-center md:justify-start gap-2 text-white/90 text-sm font-medium">
+                      <span>Try it now</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                  
+                  {/* Arrow Icon */}
+                  <div className="flex-shrink-0 hidden md:block">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/30 group-hover:bg-white/30 transition-colors">
+                      <ArrowRight className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </button>
           </div>
 
           {/* Add Task Form Section */}

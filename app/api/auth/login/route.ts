@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     })
     
     return response
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid input', details: error.issues },
@@ -73,9 +73,27 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    // Check for database connection errors
+    if (
+      (error && typeof error === 'object' && 'code' in error && error.code === 'ENOTFOUND') ||
+      (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && (error.message.includes('dummy') || error.message.includes('fetch failed')))
+    ) {
+      const errorMessage = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' ? error.message : 'Unknown error'
+      console.error('❌ Database connection error:', errorMessage)
+      return NextResponse.json(
+        { 
+          error: 'Database connection failed',
+          message: 'DATABASE_URL is not configured. Please create a .env.local file with your database connection string.',
+          hint: 'See .env.example for format'
+        },
+        { status: 500 }
+      )
+    }
+    
     console.error('Login error:', error)
+    const errorMessage = error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' ? error.message : 'An unexpected error occurred'
     return NextResponse.json(
-      { error: 'Login failed' },
+      { error: 'Login failed', message: errorMessage },
       { status: 500 }
     )
   }

@@ -63,7 +63,12 @@ export const authAPI = {
    * Login with email and password
    */
   login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/auth/login', data)
+    const response = await axios.post<AuthResponse>('/api/auth/login', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    })
     return response.data
   },
 

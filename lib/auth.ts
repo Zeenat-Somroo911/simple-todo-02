@@ -34,7 +34,7 @@ export const auth = {
    * Note: Token is now set by backend in HTTP-only cookie
    * This function is kept for compatibility but doesn't do anything
    */
-  setToken(token: string): void {
+  setToken(_token: string): void {
     // Token is automatically set in cookie by backend
     // No need to store in localStorage
   },
@@ -104,13 +104,25 @@ export const auth = {
           this.setUser(data.user)
           return { authenticated: true, user: data.user }
         }
+        // API returns 200 with authenticated: false when not authenticated
+        // This is expected behavior, so we silently handle it
+        this.logout()
+        return { authenticated: false }
       }
       
-      // If not authenticated, clear local data
+      // If response is not ok, clear local data
+      // Only log errors for unexpected status codes (not 200, not 401)
+      if (response.status !== 401 && response.status !== 200) {
+        console.error('Auth verification failed with status:', response.status)
+      }
+      
       this.logout()
       return { authenticated: false }
     } catch (error) {
-      console.error('Auth verification error:', error)
+      // Only log network errors, not expected 401s
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        console.error('Auth verification network error:', error)
+      }
       return { authenticated: false }
     }
   },

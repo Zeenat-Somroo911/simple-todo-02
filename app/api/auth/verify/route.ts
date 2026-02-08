@@ -10,9 +10,11 @@ export async function GET(request: NextRequest) {
     const userId = getUserIdFromRequest(request)
     
     if (!userId) {
+      // Return 200 with authenticated: false instead of 401 to avoid noisy console errors
+      // 401 status causes browser to log "Failed to load resource" which is expected for unauthenticated users
       return NextResponse.json(
         { authenticated: false },
-        { status: 401 }
+        { status: 200 }
       )
     }
     
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { authenticated: false },
-        { status: 401 }
+        { status: 200 }
       )
     }
     
@@ -43,7 +45,7 @@ export async function GET(request: NextRequest) {
     console.error('Verify auth error:', error)
     return NextResponse.json(
       { authenticated: false },
-      { status: 401 }
+      { status: 200 }
     )
   }
 }

@@ -38,11 +38,12 @@ async function initDatabase() {
     console.log('✅ Users table created\n')
 
     // Create tasks table
+    // Note: Foreign keys removed for Neon serverless compatibility
     console.log('📝 Creating tasks table...')
     await sql`
       CREATE TABLE IF NOT EXISTS tasks (
         id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        user_id VARCHAR(255) NOT NULL,
         title VARCHAR(255) NOT NULL,
         description TEXT DEFAULT '',
         completed BOOLEAN DEFAULT FALSE,
@@ -62,13 +63,53 @@ async function initDatabase() {
     `
     console.log('✅ Index created\n')
 
+    // Create conversations table
+    // Note: Foreign keys removed for Neon serverless compatibility
+    console.log('📝 Creating conversations table...')
+    await sql`
+      CREATE TABLE IF NOT EXISTS conversations (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `
+    console.log('✅ Conversations table created\n')
+
+    // Create messages table
+    console.log('📝 Creating messages table...')
+    await sql`
+      CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        conversation_id INTEGER NOT NULL,
+        user_id VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL CHECK (role IN ('user', 'assistant')),
+        content TEXT NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `
+    console.log('✅ Messages table created\n')
+
+    // Create indexes for conversations and messages
+    console.log('📝 Creating indexes for conversations and messages...')
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id)
+    `
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id)
+    `
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id)
+    `
+    console.log('✅ Indexes created\n')
+
     // Verify tables
     console.log('🔍 Verifying tables...')
     const tables = await sql`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
-      AND table_name IN ('users', 'tasks')
+      AND table_name IN ('users', 'tasks', 'conversations', 'messages')
     `
     
     console.log('✅ Database initialized successfully!')

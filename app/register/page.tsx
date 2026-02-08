@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, User as UserIcon, CheckSquare } from 'lucide-react'
@@ -59,7 +59,7 @@ export default function RegisterPage() {
       if (error && typeof error === 'object') {
         // Axios error structure
         if ('response' in error) {
-          const axiosError = error as { response?: { data?: any; status?: number } }
+          const axiosError = error as { response?: { data?: { detail?: { error?: { message?: string }; message?: string }; message?: string; error?: string }; status?: number } }
           
           if (axiosError.response?.status === 400) {
             errorMessage = 'Invalid data provided. Please check your inputs.'

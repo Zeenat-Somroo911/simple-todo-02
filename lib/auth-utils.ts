@@ -45,7 +45,7 @@ export function verifyToken(token: string): { sub: string } | null {
   try {
     const decoded = jwt.verify(token, JWT_SECRET_FINAL) as { sub: string }
     return decoded
-  } catch (error) {
+  } catch {
     return null
   }
 }

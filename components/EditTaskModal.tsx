@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { Modal } from './ui/Modal'
-import { Input } from './ui/Input'
-import { Textarea } from './ui/Textarea'
-import { Button } from './ui/Button'
 import { Task, TaskPriority } from '@/types/task'
 import CategorySelector from './CategorySelector'
 import DueDatePicker from './DueDatePicker'
